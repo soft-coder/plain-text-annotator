@@ -1,0 +1,208 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "shell": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/shell",
+      "sourceRoot": "projects/shell/src",
+      "prefix": "pta",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/shell/src/main.ts",
+            "tsConfig": "projects/shell/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/shell/public"
+              }
+            ],
+            "styles": [
+              "projects/shell/src/styles.scss"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "shell:build:production"
+            },
+            "development": {
+              "buildTarget": "shell:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "shared-data-access": {
+      "projectType": "library",
+      "root": "projects/shared-data-access",
+      "sourceRoot": "projects/shared-data-access/src",
+      "prefix": "pta",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-data-access/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-data-access/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/shared-data-access/tsconfig.spec.json"
+          }
+        }
+      }
+    },
+    "shared-ui": {
+      "projectType": "library",
+      "root": "projects/shared-ui",
+      "sourceRoot": "projects/shared-ui/src",
+      "prefix": "pta",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/shared-ui/tsconfig.spec.json"
+          }
+        }
+      }
+    },
+    "shared-model": {
+      "projectType": "library",
+      "root": "projects/shared-model",
+      "sourceRoot": "projects/shared-model/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-model/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-model/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/shared-model/tsconfig.spec.json"
+          }
+        }
+      }
+    },
+    "shared-util": {
+      "projectType": "library",
+      "root": "projects/shared-util",
+      "sourceRoot": "projects/shared-util/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-util/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-util/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/shared-util/tsconfig.spec.json"
+          }
+        }
+      }
+    },
+    "feature-article": {
+      "projectType": "library",
+      "root": "projects/feature-article",
+      "sourceRoot": "projects/feature-article/src",
+      "prefix": "pta",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/feature-article/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/feature-article/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/feature-article/tsconfig.spec.json"
+          }
+        }
+      }
+    }
+  }
+}
