@@ -4,4 +4,4 @@
 
 export { IdGenerator } from './lib/id-generator';
 export { LocalStorage } from './lib/local-storage';
-export type { getContext } from './lib/text-conext';
+export { getContext } from './lib/text-conext';
