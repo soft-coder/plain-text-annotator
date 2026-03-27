@@ -21,7 +21,7 @@ export class ArticleFacade {
     }))
   );
 
-  create(title: string, content: string): void {
+  create(title: string, content: string): string {
     const article: ArticleModel = {
       id: this.idGenerator.generate(),
       title,
@@ -29,6 +29,7 @@ export class ArticleFacade {
       annotations: []
     };
     this.state.update(articles => [...articles, article]);
+    return article.id;
   }
 
   update(id: string, newTitle: string, newContent: string): void {

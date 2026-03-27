@@ -45,7 +45,7 @@ describe('ArticleFacade', () => {
     const generateSpy = idGeneratorSpy.generate as Mock;
     generateSpy.mockReturnValue(newId);
 
-    service.create(title, content);
+    const articleId = service.create(title, content);
     const updateSpy = articleStateSpy.update as Mock;
     const updateFn = updateSpy.mock.calls[0][0];
     const result = updateFn(initialArticles) as ArticleModel[];
@@ -60,6 +60,7 @@ describe('ArticleFacade', () => {
       annotations: []
     });
     expect(result).not.toBe(initialArticles);
+    expect(articleId).toBe(newId)
   });
 
   it('should return articles from state', () => {
