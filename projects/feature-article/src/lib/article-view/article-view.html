@@ -19,7 +19,6 @@
                     @if (segment.annotation) {
                         <span
                             (mouseenter)="onMouseEnterAnnotation($event, segment.annotation.id)"
-                            (mouseleave)="onMouseLeaveAnnotation()"
                             class="annotation-highlight"
                             [style.text-decoration-color]="segment.annotation.color"
                             [title]="segment.annotation.comment">{{segment.text}}</span>

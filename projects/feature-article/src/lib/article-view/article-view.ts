@@ -117,11 +117,6 @@ export class ArticleView {
     this.selectionRect.set(clientRects[clientRects.length - 1]);
   }
 
-  onMouseLeaveAnnotation() {
-    this.annotationId.set(null);
-  }
-
-
   goBack() {
     this.router.navigate(['/']);
   }
