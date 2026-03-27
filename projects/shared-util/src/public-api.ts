@@ -5,3 +5,4 @@
 export { IdGenerator } from './lib/id-generator';
 export { LocalStorage } from './lib/local-storage';
 export { getContext } from './lib/text-conext';
+export { debounceSignal } from './lib/debounced-signal';
