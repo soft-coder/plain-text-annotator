@@ -35,3 +35,8 @@
   white-space: pre-wrap;
   color: var(--pta-color-text);
 }
+
+.annotation-highlight {
+  text-decoration: underline;
+  cursor: pointer;
+}

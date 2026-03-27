@@ -14,9 +14,20 @@
 
         <main class="article-content">
             <h1 class="article-title">{{ item.title }}</h1>
-            <div class="article-body">
-                {{ item.content }}
-            </div>
+            <main class="article-body">
+                @for (segment of segments(); track $index) {
+                    @if (segment.annotation) {
+                        <span
+                            class="annotation-highlight"
+                            [style.text-decoration-color]="segment.annotation.color"
+                            [title]="segment.annotation.comment">
+                            {{ segment.text }}
+                        </span>
+                    } @else {
+                        <span class="text-segment">{{ segment.text }}</span>
+                    }
+                }
+            </main>
         </main>
     </div>
 } @else {
