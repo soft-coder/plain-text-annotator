@@ -1,0 +1,25 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pta-size-control-h);
+  padding: 0 var(--pta-space-md);
+  border-radius: var(--pta-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: inherit;
+
+  &.primary {
+    background-color: var(--pta-color-primary);
+    color: var(--pta-color-surface);
+    &:hover { background-color: var(--pta-color-primary-hover); }
+  }
+
+  &.danger {
+    background-color: var(--pta-color-danger);
+    color: var(--pta-color-surface);
+    &:hover { background-color: var(--pta-color-danger-hover); }
+  }
+}
