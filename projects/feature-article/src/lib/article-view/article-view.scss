@@ -27,6 +27,7 @@
   margin-top: 0;
   margin-bottom: var(--pta-space-md);
   font-size: pta-rem(32);
+  user-select: none;
 }
 
 .article-body {
@@ -34,6 +35,11 @@
   line-height: 1.6;
   white-space: pre-wrap;
   color: var(--pta-color-text);
+}
+
+.no-select {
+  user-select: none;
+  pointer-events: none;
 }
 
 .annotation-highlight {
