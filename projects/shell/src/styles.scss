@@ -30,6 +30,11 @@
   --pta-font-size-base: #{rem(14)};
   --pta-font-size-lg: #{rem(18)};
   --pta-radius: #{rem(4)};
+
+  /* Micro-system  */
+  --pta-size-arrow: #{rem(6)};
+  --pta-space-popover-offset: #{rem(12)};
+  --pta-shadow-popover: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 body {
