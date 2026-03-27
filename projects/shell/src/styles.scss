@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 // Функция для перевода px в rem (база 16px)
-@function rem($px) {
+@function pta-rem($px) {
   @return ($px / 16) * 1rem;
 }
 
@@ -15,25 +15,27 @@
   --pta-color-bg: #f8f9fa;
   --pta-color-border: #dee2e6;
   --pta-color-text: #212529;
+  --pta-color-text-muted: #868e96;
+  --pta-color-text-light: #adb5bd;
 
   /* Spacing (Margin, Padding, Gap) */
-  --pta-space-xs: #{rem(4)};
-  --pta-space-sm: #{rem(8)};
-  --pta-space-md: #{rem(16)};
-  --pta-space-lg: #{rem(24)};
+  --pta-space-xs: #{pta-rem(4)};
+  --pta-space-sm: #{pta-rem(8)};
+  --pta-space-md: #{pta-rem(16)};
+  --pta-space-lg: #{pta-rem(24)};
 
   /* Sizing (Height, Width) */
-  --pta-size-control-h: #{rem(40)}; // Высота кнопок и инпутов
-  --pta-size-icon: #{rem(20)};
+  --pta-size-control-h: #{pta-rem(40)}; // Высота кнопок и инпутов
+  --pta-size-icon: #{pta-rem(20)};
 
   /* Typography */
-  --pta-font-size-base: #{rem(14)};
-  --pta-font-size-lg: #{rem(18)};
-  --pta-radius: #{rem(4)};
+  --pta-font-size-base: #{pta-rem(14)};
+  --pta-font-size-lg: #{pta-rem(18)};
+  --pta-radius: #{pta-rem(4)};
 
   /* Micro-system  */
-  --pta-size-arrow: #{rem(6)};
-  --pta-space-popover-offset: #{rem(12)};
+  --pta-size-arrow: #{pta-rem(6)};
+  --pta-space-popover-offset: #{pta-rem(12)};
   --pta-shadow-popover: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 

@@ -4,8 +4,8 @@
   gap: var(--pta-space-xs);
   padding: var(--pta-space-xs);
   button {
-    width: rem(24);
-    height: rem(24);
+    width: pta-rem(24);
+    height: pta-rem(24);
     border-radius: 50%;
     border: 2px solid transparent;
     cursor: pointer;

@@ -2,7 +2,6 @@ import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'pta-color-picker',
-  standalone: true,
   templateUrl: 'color-picker.html',
   styleUrl: 'color-picker.scss'
 })
