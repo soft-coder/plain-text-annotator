@@ -1,0 +1,22 @@
+<table pta-table>
+    <thead>
+    <tr>
+        <th>Заголовок</th>
+        <th style="width: 150px">Аннотации</th>
+    </tr>
+    </thead>
+    <tbody>
+        @for (article of articles(); track article.id) {
+            <tr>
+                <td><strong>{{ article.title }}</strong></td>
+                <td>{{ article.annotationsCount }}</td>
+            </tr>
+        } @empty {
+            <tr>
+                <td colspan="2" class="empty-cell">
+                    Статей пока нет. Создайте свою первую статью!
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
