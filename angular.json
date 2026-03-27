@@ -31,7 +31,12 @@
             ],
             "styles": [
               "projects/shell/src/styles.scss"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "projects/shared-ui/src/lib/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {

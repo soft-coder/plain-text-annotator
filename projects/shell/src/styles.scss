@@ -1,9 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
-
-// Функция для перевода px в rem (база 16px)
-@function pta-rem($px) {
-  @return ($px / 16) * 1rem;
-}
+@use 'utils' as *;
 
 :root {
   /* Colors */

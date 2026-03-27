@@ -45,7 +45,7 @@ describe('ArticleFacade', () => {
     const generateSpy = idGeneratorSpy.generate as Mock;
     generateSpy.mockReturnValue(newId);
 
-    service.create(title, content);
+    const articleId = service.create(title, content);
     const updateSpy = articleStateSpy.update as Mock;
     const updateFn = updateSpy.mock.calls[0][0];
     const result = updateFn(initialArticles) as ArticleModel[];
@@ -60,6 +60,7 @@ describe('ArticleFacade', () => {
       annotations: []
     });
     expect(result).not.toBe(initialArticles);
+    expect(articleId).toBe(newId)
   });
 
   it('should return articles from state', () => {
@@ -98,22 +99,36 @@ describe('ArticleFacade', () => {
   it('should update content', () => {
     const targetId = '1';
     const otherId = '2';
+    const newTitle = 'Updated title';
     const newContent = 'Updated content';
+    let untouchedTitle = 'Untouched title';
     let untouchedContent = 'Untouched content';
 
     const articleModels: ArticleModel[] = [
-      { id: targetId, content: 'Old', annotations: [] } as any,
-      { id: otherId, content: untouchedContent, annotations: [] } as any,
+      {
+        id: targetId,
+        title: 'Old title',
+        content: 'Old content',
+        annotations: []
+      } as any,
+      {
+        id: otherId,
+        title: untouchedTitle,
+        content: untouchedContent,
+        annotations: []
+      } as any,
     ];
 
-    service.updateContent(targetId, newContent);
+    service.update(targetId, newTitle, newContent);
     const updateSpy = articleStateSpy.update as Mock;
     const updateFn = vi.mocked(updateSpy).mock.calls[0][0];
     const result = updateFn(articleModels) as ArticleModel[];
 
     const updated = result.find(a => a.id === targetId);
     const untouched = result.find(a => a.id === otherId);
+    expect(updated?.title).toBe(newTitle);
     expect(updated?.content).toBe(newContent);
+    expect(untouched?.title).toBe(untouchedTitle);
     expect(untouched?.content).toBe(untouchedContent);
     expect(result).not.toBe(articleModels);
   });
@@ -122,10 +137,13 @@ describe('ArticleFacade', () => {
 
   it('should recover annotation indices when article content updated', () => {
     const targetId = '1';
+    const oldTitle = 'Old article title';
     const oldContent = 'The quick brown fox';
+    const newTitle = 'New article title';
     const newContent = 'NEWS: The quick brown fox';
     const articleModels: ArticleModel[] = [{
       id: targetId,
+      title: oldTitle,
       content: oldContent,
       annotations: [{
         text: 'brown',
@@ -136,7 +154,7 @@ describe('ArticleFacade', () => {
       }]
     } as any];
 
-    service.updateContent(targetId, newContent);
+    service.update(targetId, newTitle, newContent);
     const updateSpy = articleStateSpy.update as Mock;
     const updateFn = vi.mocked(updateSpy).mock.calls[0][0];
     const result = updateFn(articleModels) as ArticleModel[];

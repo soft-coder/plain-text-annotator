@@ -21,7 +21,7 @@ export class ArticleFacade {
     }))
   );
 
-  create(title: string, content: string): void {
+  create(title: string, content: string): string {
     const article: ArticleModel = {
       id: this.idGenerator.generate(),
       title,
@@ -29,9 +29,10 @@ export class ArticleFacade {
       annotations: []
     };
     this.state.update(articles => [...articles, article]);
+    return article.id;
   }
 
-  updateContent(id: string, newContent: string): void {
+  update(id: string, newTitle: string, newContent: string): void {
     this.state.update(articles => articles.map(article => {
       if (article.id !== id) {
         return article;
@@ -42,7 +43,8 @@ export class ArticleFacade {
         .filter((a): a is AnnotationModel => a !== null);
 
       return {
-        ...article,
+        id: article.id,
+        title: newTitle,
         content: newContent,
         annotations: validAnnotations
       };

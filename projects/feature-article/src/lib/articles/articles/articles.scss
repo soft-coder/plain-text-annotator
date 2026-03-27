@@ -1,3 +1,5 @@
+@use 'utils' as *;
+
 .container {
   max-width: var(--pta-size-content-max, pta-rem(1000));
   margin: var(--pta-space-lg) auto;

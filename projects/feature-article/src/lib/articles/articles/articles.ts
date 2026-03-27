@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
 import { ArticleTable } from '../article-table/article-table';
 import { Button } from '@pta/ui';
@@ -11,11 +11,15 @@ import { Button } from '@pta/ui';
   styleUrl: 'articles.scss'
 })
 export class Articles {
+  private activatedRoute = inject(ActivatedRoute);
+
   protected facade = inject(ArticleFacade);
 
   private router = inject(Router);
 
   goToCreate() {
-    this.router.navigate(['/edit', 'new']);
+    this.router.navigate(['edit', 'new'], {
+      relativeTo: this.activatedRoute
+    });
   }
 }
