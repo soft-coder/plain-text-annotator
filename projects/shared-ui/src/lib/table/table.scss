@@ -1,0 +1,27 @@
+table[pta-table] {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--pta-font-size-base);
+  background: var(--pta-color-surface);
+
+  th {
+    text-align: left;
+    padding: var(--pta-space-sm) var(--pta-space-md);
+    background-color: color-mix(in srgb, var(--pta-color-bg), black 2%);
+    border-bottom: 2px solid var(--pta-color-border);
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: rem(12);
+  }
+
+  td {
+    padding: var(--pta-space-sm) var(--pta-space-md);
+    border-bottom: 1px solid var(--pta-color-border);
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background-color: color-mix(in srgb, var(--pta-color-bg), white 50%);
+  }
+}

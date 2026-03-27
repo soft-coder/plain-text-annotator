@@ -1,0 +1,9 @@
+<div class="editable-wrapper"
+     [class.bordered]="showStyleOnFocus()"
+     [attr.data-value]="value() || placeholder() + ' '">
+      <textarea
+              [(ngModel)]="value"
+              [placeholder]="placeholder()"
+              rows="1">
+      </textarea>
+</div>

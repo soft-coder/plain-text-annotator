@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Функция для перевода px в rem (база 16px)
+@function rem($px) {
+  @return ($px / 16) * 1rem;
+}
+
+:root {
+  /* Colors */
+  --pta-color-primary: #3f51b5;
+  --pta-color-primary-hover: #303f9f;
+  --pta-color-danger: #f44336;
+  --pta-color-danger-hover: #d32f2f;
+  --pta-color-surface: #ffffff;
+  --pta-color-bg: #f8f9fa;
+  --pta-color-border: #dee2e6;
+  --pta-color-text: #212529;
+
+  /* Spacing (Margin, Padding, Gap) */
+  --pta-space-xs: #{rem(4)};
+  --pta-space-sm: #{rem(8)};
+  --pta-space-md: #{rem(16)};
+  --pta-space-lg: #{rem(24)};
+
+  /* Sizing (Height, Width) */
+  --pta-size-control-h: #{rem(40)}; // Высота кнопок и инпутов
+  --pta-size-icon: #{rem(20)};
+
+  /* Typography */
+  --pta-font-size-base: #{rem(14)};
+  --pta-font-size-lg: #{rem(18)};
+  --pta-radius: #{rem(4)};
+
+  /* Micro-system  */
+  --pta-size-arrow: #{rem(6)};
+  --pta-space-popover-offset: #{rem(12)};
+  --pta-shadow-popover: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: var(--pta-font-size-base);
+  background-color: var(--pta-color-bg);
+  color: var(--pta-color-text);
+}
