@@ -1,0 +1,13 @@
+@use 'utils' as *;
+
+.annotation-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pta-space-sm);
+  min-width: pta-rem(200);
+}
+.divider {
+  height: 1px;
+  background: var(--pta-color-border);
+  margin: 0 pta-rem(-8);
+}

@@ -1,0 +1,12 @@
+<div class="annotation-editor">
+    <pta-color-picker
+            [value]="activeColor()"
+            (select)="updateColor.emit($event)" />
+
+    <div class="divider"></div>
+
+    <pta-editable-text
+            [(value)]="comment"
+            [placeholder]="'Добавить комментарий...'"
+            [showStyleOnFocus]="false" />
+</div>
