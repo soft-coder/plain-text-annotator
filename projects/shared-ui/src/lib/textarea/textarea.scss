@@ -1,6 +1,6 @@
 :host {
   width: 100%;
-  min-height: #{rem(120)};
+  min-height: #{pta-rem(120)};
   padding: var(--pta-space-sm);
   border: 1px solid var(--pta-color-border);
   border-radius: var(--pta-radius);

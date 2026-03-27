@@ -9,7 +9,7 @@
   transform: translateY(-100%);
   margin-top: calc(var(--pta-space-popover-offset) * -1);
   width: max-content;
-  max-width: rem(320);
+  max-width: pta-rem(320);
   display: flex;
   flex-direction: column;
 }
