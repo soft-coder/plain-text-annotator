@@ -9,11 +9,11 @@ export class ColorPicker {
   value = input<string>('');
 
   presets = input<string[]>([
-    '#ffeb3b',
-    '#ffccbc',
-    '#c8e6c9',
-    '#bbdeff',
-    '#e1bee7'
+    '#D32F2F',
+    '#1976D2',
+    '#388E3C',
+    '#FBC02D',
+    '#7B1FA2',
   ]);
 
   select = output<string>();

@@ -38,5 +38,15 @@
 
 .annotation-highlight {
   text-decoration: underline;
-  cursor: pointer;
+  text-decoration-color: var(--anno-color);
+  text-decoration-thickness: pta-rem(3); // Делаем линию жирнее (3px)
+  text-underline-offset: pta-rem(4);    // Сдвигаем чуть ниже текста для чистоты
+
+  transition: text-decoration-thickness 0.2s;
+  cursor: default;
+
+  &:hover {
+    text-decoration-thickness: pta-rem(5); // Эффект при наведении
+    filter: brightness(0.8);
+  }
 }

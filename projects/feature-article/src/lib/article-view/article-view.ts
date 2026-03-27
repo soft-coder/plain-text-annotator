@@ -47,7 +47,7 @@ export class ArticleView {
 
   protected annotationComment = signal('');
 
-  protected annotationColor = signal('#ffeb3b');
+  protected annotationColor = signal('#FBC02D');
 
   private pendingRange = signal<PendingRange | null>(null);
 
