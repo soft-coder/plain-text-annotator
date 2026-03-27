@@ -1,0 +1,18 @@
+.container {
+  max-width: var(--pta-size-content-max, rem(1000));
+  margin: var(--pta-space-lg) auto;
+  padding: 0 var(--pta-space-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--pta-space-lg);
+}
+
+.title {
+  font-size: var(--pta-font-size-lg);
+  margin: 0;
+  color: var(--pta-color-text);
+}
