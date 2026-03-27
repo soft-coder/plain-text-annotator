@@ -1,0 +1,13 @@
+<div class="edit-container">
+    <header class="edit-header">
+        <button pta-button variant="danger" (click)="cancel()">Отмена</button>
+        <h1>{{ isNew() ? 'Создание статьи' : 'Редактирование' }}</h1>
+        <button pta-button (click)="save()"
+                [disabled]="articleForm().invalid()">Сохранить</button>
+    </header>
+
+    <main class="edit-form">
+        <input pta-input [formField]="articleForm.title" placeholder="Заголовок" />
+        <textarea pta-textarea [formField]="articleForm.content" placeholder="Текст"></textarea>
+    </main>
+</div>
