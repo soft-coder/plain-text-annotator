@@ -1,0 +1,27 @@
+@if (article(); as item) {
+    <div class="view-container">
+        <header class="view-header">
+            <button pta-button (click)="goBack()">Назад</button>
+            <div class="actions">
+                <button pta-button [routerLink]="['..', 'edit', item.id]">
+                    Редактировать
+                </button>
+                <button pta-button [variant]="'danger'" (click)="delete()">
+                    Удалить
+                </button>
+            </div>
+        </header>
+
+        <main class="article-content">
+            <h1 class="article-title">{{ item.title }}</h1>
+            <div class="article-body">
+                {{ item.content }}
+            </div>
+        </main>
+    </div>
+} @else {
+    <div class="not-found">
+        <p>Статья не найдена</p>
+        <button pta-button (click)="goBack()">Вернуться к списку</button>
+    </div>
+}
