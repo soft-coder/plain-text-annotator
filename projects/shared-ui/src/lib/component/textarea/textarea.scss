@@ -1,0 +1,18 @@
+:host {
+  width: 100%;
+  min-height: #{rem(120)};
+  padding: var(--pta-space-sm);
+  border: 1px solid var(--pta-color-border);
+  border-radius: var(--pta-radius);
+  font-family: inherit;
+  font-size: var(--pta-font-size-base);
+  line-height: 1.5;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--pta-color-primary);
+  }
+}

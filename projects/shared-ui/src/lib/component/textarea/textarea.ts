@@ -1,0 +1,15 @@
+// projects/shared/ui/src/lib/textarea.ts
+import { Component, input } from '@angular/core';
+
+@Component({
+  selector: 'textarea[pta-textarea]',
+  standalone: true,
+  templateUrl: 'textarea.html',
+  styleUrl: 'textarea.scss',
+  host: {
+    '[rows]': 'rows()'
+  }
+})
+export class Textarea {
+  rows = input<number>(5);
+}
