@@ -4,3 +4,7 @@
   color: var(--pta-color-text-muted);
   font-style: italic;
 }
+.actions {
+  display: flex;
+  gap: var(--pta-space-md)
+}

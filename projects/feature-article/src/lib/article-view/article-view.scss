@@ -1,0 +1,37 @@
+@use 'utils' as *;
+
+.view-container {
+  max-width: pta-rem(800);
+  margin: pta-rem(40) auto;
+  padding: 0 var(--pta-space-md);
+}
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--pta-space-lg);
+  .actions {
+    display: flex;
+    gap: var(--pta-space-md)
+  }
+}
+
+.article-content {
+  background: var(--pta-color-surface);
+  padding: var(--pta-space-lg);
+  border-radius: var(--pta-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.article-title {
+  margin-top: 0;
+  margin-bottom: var(--pta-space-md);
+  font-size: pta-rem(32);
+}
+
+.article-body {
+  font-size: pta-rem(18);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--pta-color-text);
+}
