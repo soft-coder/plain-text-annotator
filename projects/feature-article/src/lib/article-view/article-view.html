@@ -22,13 +22,9 @@
                             (mouseleave)="onMouseLeaveAnnotation()"
                             class="annotation-highlight"
                             [style.text-decoration-color]="segment.annotation.color"
-                            [title]="segment.annotation.comment">
-                            {{ segment.text }}
-                        </span>
+                            [title]="segment.annotation.comment">{{segment.text}}</span>
                     } @else {
-                        <span class="text-segment" (mouseup)="onMouseUpTextSegment()">
-                            {{ segment.text }}
-                        </span>
+                        <span class="text-segment" (mouseup)="onMouseUpTextSegment()">{{segment.text}}</span>
                     }
                 }
             </main>
