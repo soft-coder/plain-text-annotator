@@ -1,0 +1,20 @@
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--pta-space-xs);
+  padding: var(--pta-space-xs);
+  button {
+    width: rem(24);
+    height: rem(24);
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.1s;
+    &:hover {
+      transform: scale(1.1);
+    }
+    &.active {
+      border-color: var(--pta-color-text);
+    }
+  }
+}

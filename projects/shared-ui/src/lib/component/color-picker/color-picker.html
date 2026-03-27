@@ -1,0 +1,10 @@
+<div class="picker-grid">
+    @for (color of presets(); track color) {
+        <button
+                type="button"
+                [style.background-color]="color"
+                [class.active]="value() === color"
+                (click)="select.emit(color)">
+        </button>
+    }
+</div>

@@ -7,4 +7,5 @@ import { Component, ViewEncapsulation } from '@angular/core';
   styleUrl: 'table.scss',
   encapsulation: ViewEncapsulation.None
 })
-export class Table {}
+export class Table {
+}

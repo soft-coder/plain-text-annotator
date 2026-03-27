@@ -1,4 +1,3 @@
-// projects/shared/ui/src/lib/textarea.ts
 import { Component, input } from '@angular/core';
 
 @Component({
