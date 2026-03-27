@@ -38,3 +38,15 @@
         <button pta-button (click)="goBack()">Вернуться к списку</button>
     </div>
 }
+
+
+@if (selectionRect()) {
+    <pta-popover [anchor]="selectionRect()">
+        <pta-annotation-editor
+                [activeColor]="annotationColor()"
+                [(comment)]="annotationComment"
+                (updateColor)="updateAnnotationColor($event)"
+                (updateComment)="updateAnnotationComment($event)"
+        />
+    </pta-popover>
+}

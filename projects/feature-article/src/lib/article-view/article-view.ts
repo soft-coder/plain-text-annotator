@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
-import { Button } from '@pta/ui';
+import { Button, Popover } from '@pta/ui';
+import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
 import { AnnotationTextProcessor } from '../annotation/annotation-text-processor';
 
 type PendingRange = { start: number, end: number, text: string };
@@ -16,7 +17,7 @@ type PendingRange = { start: number, end: number, text: string };
 @Component({
   selector: 'pta-article-view',
   standalone: true,
-  imports: [Button, RouterLink],
+  imports: [Button, RouterLink, AnnotationEditor, Popover],
   templateUrl: './article-view.html',
   styleUrl: './article-view.scss',
   preserveWhitespaces: false
@@ -41,6 +42,12 @@ export class ArticleView {
       article.annotations
     );
   });
+
+  protected annotationId = signal<string | null>(null);
+
+  protected annotationComment = signal('');
+
+  protected annotationColor = signal('#ffeb3b');
 
   private pendingRange = signal<PendingRange | null>(null);
 
@@ -91,6 +98,7 @@ export class ArticleView {
       });
 
       this.selectionRect.set(range.getBoundingClientRect());
+      this.addAnnotation();
     }
   }
 
@@ -104,26 +112,46 @@ export class ArticleView {
     this.goBack();
   }
 
-  // В классе ArticleView
-  protected currentComment = signal('');
 
-  protected activeColor = signal('#ffeb3b');
-
-  saveAnnotation(color: string) {
+  addAnnotation() {
     const range = this.pendingRange();
     const article = this.article();
 
     if (range && article) {
       const { start, end } = range;
-      this.facade.addAnnotation(
+      const id = this.facade.addAnnotation(
         article.id,
         start,
         end,
+        this.annotationColor()
+      );
+      this.annotationId.set(id);
+      this.selectionRect.set(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  }
+
+  updateAnnotationColor(color: string) {
+    const article = this.article();
+    const annotationId = this.annotationId();
+    if (article && annotationId) {
+      this.facade.updateAnnotationColor(
+        article.id,
+        annotationId,
         color
       );
-      this.selectionRect.set(null);
-      this.currentComment.set('');
-      window.getSelection()?.removeAllRanges();
+    }
+  }
+
+  updateAnnotationComment(comment: string) {
+    const article = this.article();
+    const annotationId = this.annotationId();
+    if (article && annotationId) {
+      this.facade.updateAnnotationComment(
+        article.id,
+        annotationId,
+        comment
+      );
     }
   }
 
