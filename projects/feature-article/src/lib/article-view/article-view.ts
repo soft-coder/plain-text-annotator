@@ -1,15 +1,25 @@
-import { Component, inject, computed, input, HostListener } from '@angular/core';
+import {
+  Component,
+  inject,
+  computed,
+  input,
+  HostListener,
+  signal
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
 import { Button } from '@pta/ui';
 import { AnnotationTextProcessor } from '../annotation/annotation-text-processor';
+
+type PendingRange = { start: number, end: number, text: string };
 
 @Component({
   selector: 'pta-article-view',
   standalone: true,
   imports: [Button, RouterLink],
   templateUrl: './article-view.html',
-  styleUrl: './article-view.scss'
+  styleUrl: './article-view.scss',
+  preserveWhitespaces: false
 })
 export class ArticleView {
   private annotationTextProcessor = inject(AnnotationTextProcessor);
@@ -31,6 +41,10 @@ export class ArticleView {
       article.annotations
     );
   });
+
+  private pendingRange = signal<PendingRange | null>(null);
+
+  protected selectionRect = signal<DOMRect | null>(null);
 
   onMouseDown(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -57,6 +71,30 @@ export class ArticleView {
     });
   }
 
+  onMouseUp() {
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed) {
+      const range = selection.getRangeAt(0);
+
+      const preSelectionRange = range.cloneRange();
+      const container = document.querySelector('.article-body');
+      preSelectionRange.selectNodeContents(container!);
+      preSelectionRange.setEnd(range.startContainer, range.startOffset);
+
+      const start = preSelectionRange.toString().length;
+      const text = selection.toString();
+
+      this.pendingRange.set({
+        start,
+        end: start + text.length,
+        text
+      });
+
+      this.selectionRect.set(range.getBoundingClientRect());
+    }
+  }
+
+
   goBack() {
     this.router.navigate(['/']);
   }
@@ -65,4 +103,28 @@ export class ArticleView {
     this.facade.delete(this.id());
     this.goBack();
   }
+
+  // В классе ArticleView
+  protected currentComment = signal('');
+
+  protected activeColor = signal('#ffeb3b');
+
+  saveAnnotation(color: string) {
+    const range = this.pendingRange();
+    const article = this.article();
+
+    if (range && article) {
+      const { start, end } = range;
+      this.facade.addAnnotation(
+        article.id,
+        start,
+        end,
+        color
+      );
+      this.selectionRect.set(null);
+      this.currentComment.set('');
+      window.getSelection()?.removeAllRanges();
+    }
+  }
+
 }

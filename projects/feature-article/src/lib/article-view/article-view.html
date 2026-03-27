@@ -24,7 +24,9 @@
                             {{ segment.text }}
                         </span>
                     } @else {
-                        <span class="text-segment">{{ segment.text }}</span>
+                        <span class="text-segment" (mouseup)="onMouseUp()">
+                            {{ segment.text }}
+                        </span>
                     }
                 }
             </main>
