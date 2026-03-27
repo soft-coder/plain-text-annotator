@@ -1,0 +1,20 @@
+:host {
+  width: 100%;
+  height: var(--pta-size-control-h);
+  padding: 0 var(--pta-space-sm);
+  border: 1px solid var(--pta-color-border);
+  border-radius: var(--pta-radius);
+  font-family: inherit;
+  font-size: var(--pta-font-size-base);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--pta-color-primary);
+  }
+
+  &::placeholder {
+    color: #adb5bd;
+  }
+}

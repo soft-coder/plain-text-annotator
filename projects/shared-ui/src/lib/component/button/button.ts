@@ -4,6 +4,7 @@ import { Component, input, output } from '@angular/core';
   selector: 'button[pta-button]',
   standalone: true,
   templateUrl: 'button.html',
+  styleUrl: 'button.scss',
   host: {
     '[class]': 'variant()',
     '[type]': 'type()'
