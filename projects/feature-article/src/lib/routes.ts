@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { ArticleEdit } from './article-edit/article-edit/article-edit';
-import { Articles } from './articles/articles/articles';
+import { ArticleEdit } from './article-edit/article-edit';
+import { ArticleView } from './article-view/article-view';
+import { Articles } from './articles/articles';
 
 export const routes: Routes = [
   {
@@ -11,5 +12,9 @@ export const routes: Routes = [
   {
     path: 'edit/:id',
     component: ArticleEdit
+  },
+  {
+    path: ':id',
+    component: ArticleView
   }
 ];
