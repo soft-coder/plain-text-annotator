@@ -2,7 +2,6 @@ import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'button[pta-button]',
-  standalone: true,
   templateUrl: 'button.html',
   styleUrl: 'button.scss',
   host: {

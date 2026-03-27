@@ -4,7 +4,6 @@ import { Table } from '@pta/ui';
 
 @Component({
   selector: 'pta-article-table',
-  standalone: true,
   imports: [Table],
   templateUrl: 'article-table.html',
   styleUrl: 'article-table.scss'
