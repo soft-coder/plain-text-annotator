@@ -14,7 +14,7 @@
 
         <main class="article-content">
             <h1 class="article-title">{{ item.title }}</h1>
-            <main class="article-body">
+            <main class="article-body" (mousedown)="onMouseDown($event)">
                 @for (segment of segments(); track $index) {
                     @if (segment.annotation) {
                         <span
