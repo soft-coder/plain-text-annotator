@@ -53,7 +53,22 @@ export class ArticleView {
 
   protected selectionRect = signal<DOMRect | null>(null);
 
-  onMouseDown(event: MouseEvent) {
+  @HostListener('window:mouseup')
+  clearNoSelect() {
+    const elements = document.querySelectorAll('.article-body .no-select');
+    elements.forEach(el => {
+      el.classList.remove('no-select')
+    });
+  }
+
+  @HostListener('document:scroll')
+  hideAnnotationPopover() {
+    if (this.selectionRect()) {
+      this.selectionRect.set(null);
+    }
+  }
+
+  onMouseDownArticleContent(event: MouseEvent) {
     const target = event.target as HTMLElement;
     const container = target.closest('.article-body');
     if (!container) return;
@@ -70,15 +85,8 @@ export class ArticleView {
     });
   }
 
-  @HostListener('window:mouseup')
-  clearNoSelect() {
-    const elements = document.querySelectorAll('.article-body .no-select');
-    elements.forEach(el => {
-      el.classList.remove('no-select')
-    });
-  }
 
-  onMouseUp() {
+  onMouseUpTextSegment() {
     const selection = window.getSelection();
     if (selection && !selection.isCollapsed) {
       const range = selection.getRangeAt(0);
@@ -100,6 +108,17 @@ export class ArticleView {
       this.selectionRect.set(range.getBoundingClientRect());
       this.addAnnotation();
     }
+  }
+
+  onMouseEnterAnnotation($event: MouseEvent, id: string) {
+    this.annotationId.set(id);
+    const target = $event.target as HTMLSpanElement;
+    const clientRects = target.getClientRects();
+    this.selectionRect.set(clientRects[clientRects.length - 1]);
+  }
+
+  onMouseLeaveAnnotation() {
+    this.annotationId.set(null);
   }
 
 

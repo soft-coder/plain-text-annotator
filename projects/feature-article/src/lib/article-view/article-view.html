@@ -14,17 +14,19 @@
 
         <main class="article-content">
             <h1 class="article-title">{{ item.title }}</h1>
-            <main class="article-body" (mousedown)="onMouseDown($event)">
+            <main class="article-body" (mousedown)="onMouseDownArticleContent($event)">
                 @for (segment of segments(); track $index) {
                     @if (segment.annotation) {
                         <span
+                            (mouseenter)="onMouseEnterAnnotation($event, segment.annotation.id)"
+                            (mouseleave)="onMouseLeaveAnnotation()"
                             class="annotation-highlight"
                             [style.text-decoration-color]="segment.annotation.color"
                             [title]="segment.annotation.comment">
                             {{ segment.text }}
                         </span>
                     } @else {
-                        <span class="text-segment" (mouseup)="onMouseUp()">
+                        <span class="text-segment" (mouseup)="onMouseUpTextSegment()">
                             {{ segment.text }}
                         </span>
                     }
