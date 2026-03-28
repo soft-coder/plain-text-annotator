@@ -37,8 +37,8 @@
 }
 
 
-@if (selectionRect()) {
-    <pta-popover [anchor]="selectionRect()">
+@if (anchor()) {
+    <pta-popover [anchor]="anchor()">
         <pta-annotation-editor
                 [color]="annotation()?.color"
                 [initialComment]="annotation()?.comment ?? null"

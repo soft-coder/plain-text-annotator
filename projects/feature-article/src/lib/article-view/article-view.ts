@@ -4,7 +4,7 @@ import {
   computed,
   input,
   HostListener,
-  signal, viewChild
+  signal, viewChild, DOCUMENT
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
@@ -15,6 +15,8 @@ import { ANNOTATION_COLORS } from '../annotation/color-config';
 
 type PendingRange = { start: number, end: number, text: string };
 
+type PopoverAnchor = { top: number, left: number };
+
 @Component({
   selector: 'pta-article-view',
   standalone: true,
@@ -24,6 +26,8 @@ type PendingRange = { start: number, end: number, text: string };
   preserveWhitespaces: false
 })
 export class ArticleView {
+  private readonly document = inject(DOCUMENT);
+
   private readonly annotationColor = inject(ANNOTATION_COLORS);
 
   private readonly annotationTextProcessor = inject(AnnotationTextProcessor);
@@ -61,7 +65,7 @@ export class ArticleView {
 
   private pendingRange = signal<PendingRange | null>(null);
 
-  protected selectionRect = signal<DOMRect | null>(null);
+  protected anchor = signal<PopoverAnchor | null>(null);
 
   private annotationEditor = viewChild(AnnotationEditor);
 
@@ -75,8 +79,8 @@ export class ArticleView {
 
   @HostListener('document:scroll')
   hideAnnotationPopover() {
-    if (this.selectionRect()) {
-      this.selectionRect.set(null);
+    if (this.anchor()) {
+      this.anchor.set(null);
     }
   }
 
@@ -117,9 +121,29 @@ export class ArticleView {
         text
       });
 
-      this.selectionRect.set(range.getBoundingClientRect());
+      const clientRects = range.getClientRects();
+      const anchor = this.calcAnchor(
+        clientRects[clientRects.length - 1],
+        range.endContainer as Element
+      );
+      this.anchor.set(anchor);
       this.addAnnotation();
     }
+  }
+
+  private calcAnchor(rect: DOMRect, element: Element): PopoverAnchor {
+    const computedStyle = getComputedStyle(element);
+    const fontSize = parseFloat(computedStyle.fontSize);
+    const lineHeight = parseFloat(computedStyle.lineHeight);
+    const rootStyles = getComputedStyle(this.document.documentElement);
+    const arrowSizeRem = parseFloat(rootStyles.getPropertyValue('--pta-size-arrow'));
+    const rootFontSize = parseFloat(rootStyles.fontSize);
+    const arrowSizePx = rootFontSize * arrowSizeRem;
+    const gapTop = (lineHeight - fontSize) / 2;
+    return {
+      top: rect.top + gapTop + arrowSizePx,
+      left: rect.left
+    };
   }
 
   onMouseEnterAnnotation($event: MouseEvent, id: string) {
@@ -127,7 +151,11 @@ export class ArticleView {
     this.annotationId.set(id);
     const target = $event.target as HTMLSpanElement;
     const clientRects = target.getClientRects();
-    this.selectionRect.set(clientRects[clientRects.length - 1]);
+    const anchor = this.calcAnchor(
+      clientRects[clientRects.length - 1],
+      target
+    );
+    this.anchor.set(anchor);
   }
 
   goBack() {
@@ -151,7 +179,7 @@ export class ArticleView {
       );
       this.annotationEditor()?.resetComment();
       this.annotationId.set(id);
-      this.selectionRect.set(null);
+      this.anchor.set(null);
       window.getSelection()?.removeAllRanges();
     }
   }
