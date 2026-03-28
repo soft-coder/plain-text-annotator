@@ -4,13 +4,14 @@ import {
   computed,
   input,
   HostListener,
-  signal
+  signal, viewChild
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
 import { Button, Popover } from '@pta/ui';
 import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
 import { AnnotationTextProcessor } from '../annotation/annotation-text-processor';
+import { ANNOTATION_COLORS } from '../annotation/color-config';
 
 type PendingRange = { start: number, end: number, text: string };
 
@@ -23,7 +24,10 @@ type PendingRange = { start: number, end: number, text: string };
   preserveWhitespaces: false
 })
 export class ArticleView {
-  private annotationTextProcessor = inject(AnnotationTextProcessor);
+  private readonly annotationColor = inject(ANNOTATION_COLORS);
+
+  private readonly annotationTextProcessor = inject(AnnotationTextProcessor);
+
   // Input от роутера (withComponentInputBinding)
   id = input.required<string>();
 
@@ -44,14 +48,22 @@ export class ArticleView {
   });
 
   protected annotationId = signal<string | null>(null);
-
-  protected annotationComment = signal('');
-
-  protected annotationColor = signal('#FBC02D');
+  
+  protected annotation = computed(() => {
+    const article = this.article();
+    const annotationId = this.annotationId()
+    if (article && annotationId) {
+      return article.annotations.find(a => a.id === annotationId) || null
+    } else {
+      return null;
+    }
+  })
 
   private pendingRange = signal<PendingRange | null>(null);
 
   protected selectionRect = signal<DOMRect | null>(null);
+
+  private annotationEditor = viewChild(AnnotationEditor);
 
   @HostListener('window:mouseup')
   clearNoSelect() {
@@ -111,6 +123,7 @@ export class ArticleView {
   }
 
   onMouseEnterAnnotation($event: MouseEvent, id: string) {
+    this.annotationEditor()?.resetComment();
     this.annotationId.set(id);
     const target = $event.target as HTMLSpanElement;
     const clientRects = target.getClientRects();
@@ -126,19 +139,17 @@ export class ArticleView {
     this.goBack();
   }
 
-
   addAnnotation() {
     const range = this.pendingRange();
-    const article = this.article();
-
-    if (range && article) {
+    if (range) {
       const { start, end } = range;
       const id = this.facade.addAnnotation(
-        article.id,
+        this.id(),
         start,
         end,
-        this.annotationColor()
+        this.annotationColor.defaultColor
       );
+      this.annotationEditor()?.resetComment();
       this.annotationId.set(id);
       this.selectionRect.set(null);
       window.getSelection()?.removeAllRanges();
@@ -146,11 +157,10 @@ export class ArticleView {
   }
 
   updateAnnotationColor(color: string) {
-    const article = this.article();
     const annotationId = this.annotationId();
-    if (article && annotationId) {
+    if (annotationId) {
       this.facade.updateAnnotationColor(
-        article.id,
+        this.id(),
         annotationId,
         color
       );
@@ -158,11 +168,10 @@ export class ArticleView {
   }
 
   updateAnnotationComment(comment: string) {
-    const article = this.article();
     const annotationId = this.annotationId();
-    if (article && annotationId) {
+    if (annotationId) {
       this.facade.updateAnnotationComment(
-        article.id,
+        this.id(),
         annotationId,
         comment
       );

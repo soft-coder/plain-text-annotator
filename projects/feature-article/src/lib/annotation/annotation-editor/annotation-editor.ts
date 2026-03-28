@@ -1,6 +1,14 @@
-import { Component, output, model, effect, input } from '@angular/core';
+import {
+  Component,
+  output,
+  effect,
+  input,
+  signal,
+  inject, viewChild
+} from '@angular/core';
 import { ColorPicker, EditableText } from '@pta/ui';
 import { debounceSignal } from '@pta/util';
+import { ANNOTATION_COLORS } from '../color-config';
 
 @Component({
   selector: 'pta-annotation-editor',
@@ -9,11 +17,25 @@ import { debounceSignal } from '@pta/util';
   styleUrl: 'annotation-editor.scss'
  })
 export class AnnotationEditor {
-  activeColor = input('#ffeb3b');
+  private colorConfig = inject(ANNOTATION_COLORS)
 
-  comment = model('');
+  color = input(this.colorConfig.defaultColor, {
+    transform: (v: string | null | undefined) => v ?? this.colorConfig.defaultColor
+  });
 
-  debouncedComment = debounceSignal(this.comment, 500);
+  initialComment = input<string | null>(null);
+
+  updateComment = output<string>();
+
+  updateColor = output<string>();
+
+  protected colorPresets = signal(this.colorConfig.presets);
+
+  private currentComment = signal<string | null>(null);
+
+  private debouncedComment = debounceSignal(this.currentComment, 500);
+
+  private editableText = viewChild(EditableText);
 
   constructor() {
     effect(() => {
@@ -23,6 +45,12 @@ export class AnnotationEditor {
       }
     });
   }
-  updateComment = output<string>();
-  updateColor = output<string>();
+
+  resetComment() {
+    this.editableText()?.reset()
+  }
+
+  protected onChangeComment($event: string) {
+    this.currentComment.set($event);
+  }
 }

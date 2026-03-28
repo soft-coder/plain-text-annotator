@@ -8,13 +8,7 @@ import { Component, input, output } from '@angular/core';
 export class ColorPicker {
   value = input<string>('');
 
-  presets = input<string[]>([
-    '#D32F2F',
-    '#1976D2',
-    '#388E3C',
-    '#FBC02D',
-    '#7B1FA2',
-  ]);
+  presets = input<readonly string[]>();
 
   select = output<string>();
 }

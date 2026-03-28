@@ -40,8 +40,8 @@
 @if (selectionRect()) {
     <pta-popover [anchor]="selectionRect()">
         <pta-annotation-editor
-                [activeColor]="annotationColor()"
-                [(comment)]="annotationComment"
+                [color]="annotation()?.color"
+                [initialComment]="annotation()?.comment ?? null"
                 (updateColor)="updateAnnotationColor($event)"
                 (updateComment)="updateAnnotationComment($event)"
         />
