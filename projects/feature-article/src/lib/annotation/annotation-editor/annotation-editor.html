@@ -8,7 +8,7 @@
 
     <pta-editable-text
             [initialValue]="initialComment()"
-            (change)="onChangeComment($event)"
+            (valueChange)="onChangeComment($event)"
             [placeholder]="'Добавить комментарий...'"
             [showStyleOnFocus]="false" />
 </div>

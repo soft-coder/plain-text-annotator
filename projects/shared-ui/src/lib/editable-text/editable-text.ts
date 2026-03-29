@@ -14,7 +14,7 @@ export class EditableText {
 
   showStyleOnFocus = input<boolean>(false);
 
-  change = output<string>();
+  valueChange = output<string>();
 
   private localValue = signal<string | null>(null);
 
@@ -29,7 +29,7 @@ export class EditableText {
 
   protected onChange($event: string) {
     this.localValue.set($event);
-    this.change.emit($event);
+    this.valueChange.emit($event);
   }
 
   reset() {
