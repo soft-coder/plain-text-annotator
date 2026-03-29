@@ -14,6 +14,7 @@
     "baseUrl": "./",
     "sourceMap": true,
     "declaration": false,
+    "downlevelIteration": true,
     "paths": {
       "@pta/data-access": ["projects/shared-data-access/src/public-api.ts"],
       "@pta/ui": ["projects/shared-ui/src/public-api.ts"],
