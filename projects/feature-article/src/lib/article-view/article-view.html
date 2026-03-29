@@ -23,7 +23,7 @@
                             [style.text-decoration-color]="segment.annotation.color"
                             [title]="segment.annotation.comment">{{segment.text}}</span>
                     } @else {
-                        <span class="text-segment" (mouseup)="onMouseUpTextSegment()">{{segment.text}}</span>
+                        <span class="text-segment">{{segment.text}}</span>
                     }
                 }
             </main>

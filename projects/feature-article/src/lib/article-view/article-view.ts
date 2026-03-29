@@ -69,12 +69,18 @@ export class ArticleView {
 
   private annotationEditor = viewChild(AnnotationEditor);
 
+  private isSelecting = signal(false);
+
   @HostListener('window:mouseup')
   clearNoSelect() {
     const elements = document.querySelectorAll('.article-body .no-select');
     elements.forEach(el => {
       el.classList.remove('no-select')
     });
+    if (this.isSelecting()) {
+      this.isSelecting.set(false);
+      this.onEndSelection();
+    }
   }
 
   @HostListener('document:scroll')
@@ -99,10 +105,11 @@ export class ArticleView {
         el.classList.add('no-select');
       }
     });
+    this.isSelecting.set(true);
   }
 
 
-  onMouseUpTextSegment() {
+  onEndSelection() {
     const selection = window.getSelection();
     if (selection && !selection.isCollapsed) {
       const range = selection.getRangeAt(0);
@@ -122,9 +129,16 @@ export class ArticleView {
       });
 
       const clientRects = range.getClientRects();
+      const endNode = range.endContainer;
+      let endElement: HTMLElement;
+      if (endNode.nodeType === Node.TEXT_NODE) {
+        endElement = endNode.parentElement!;
+      } else {
+        endElement = endNode as HTMLElement;
+      }
       const anchor = this.calcAnchor(
         clientRects[clientRects.length - 1],
-        range.endContainer as Element
+        endElement
       );
       this.anchor.set(anchor);
       this.addAnnotation();
