@@ -6,9 +6,11 @@ import {
   HostListener,
   signal, viewChild, DOCUMENT
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
 import { Button, Popover } from '@pta/ui';
+import { delay, filter, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
 import { AnnotationTextProcessor } from '../annotation/annotation-text-processor';
 import { ANNOTATION_COLORS } from '../annotation/color-config';
@@ -16,6 +18,8 @@ import { ANNOTATION_COLORS } from '../annotation/color-config';
 type PendingRange = { start: number, end: number, text: string };
 
 type PopoverAnchor = { top: number, left: number };
+
+type MouseEnterAnnotation = { event: MouseEvent, id: string };
 
 @Component({
   selector: 'pta-article-view',
@@ -67,9 +71,17 @@ export class ArticleView {
 
   protected anchor = signal<PopoverAnchor | null>(null);
 
+  protected mouseInsidePopover = signal(false);
+
   private annotationEditor = viewChild(AnnotationEditor);
 
   private isSelecting = signal(false);
+
+  private mouseEnterAnnotation$$ = new Subject<MouseEnterAnnotation | null>();
+
+  constructor() {
+    this.wathMouseEnterAnnotation();
+  }
 
   @HostListener('window:mouseup')
   clearNoSelect() {
@@ -161,15 +173,16 @@ export class ArticleView {
   }
 
   onMouseEnterAnnotation($event: MouseEvent, id: string) {
-    this.annotationEditor()?.resetComment();
-    this.annotationId.set(id);
-    const target = $event.target as HTMLSpanElement;
-    const clientRects = target.getClientRects();
-    const anchor = this.calcAnchor(
-      clientRects[clientRects.length - 1],
-      target
-    );
-    this.anchor.set(anchor);
+    this.mouseEnterAnnotation$$.next({event: $event, id: id})
+  }
+
+  onMouseLeaveAnnotation() {
+    this.mouseEnterAnnotation$$.next(null);
+  }
+
+  onPopoverLeave() {
+    this.mouseInsidePopover.set(false);
+    this.mouseEnterAnnotation$$.next(null);
   }
 
   goBack() {
@@ -218,6 +231,42 @@ export class ArticleView {
         comment
       );
     }
+  }
+
+  private wathMouseEnterAnnotation() {
+    this.mouseEnterAnnotation$$.pipe(
+      switchMap(data => {
+        if (data) {
+          return of(data).pipe(
+            delay(200),
+            takeUntil(this.mouseEnterAnnotation$$.pipe(filter(v => v === null)))
+          );
+        } else {
+          return of(null).pipe(
+            delay(300),
+            filter(() => !this.mouseInsidePopover())
+          );
+        }
+      }),
+      tap((data: MouseEnterAnnotation | null) => {
+        if (data) {
+          this.annotationEditor()?.resetComment();
+          this.annotationId.set(data.id);
+          const target = data.event.target as HTMLSpanElement;
+          const clientRects = target.getClientRects();
+          const anchor = this.calcAnchor(
+            clientRects[clientRects.length - 1],
+            target
+          );
+          this.anchor.set(anchor);
+        } else {
+          this.annotationEditor()?.resetComment();
+          this.annotationId.set(null);
+          this.anchor.set(null);
+        }
+      }),
+      takeUntilDestroyed()
+    ).subscribe();
   }
 
 }

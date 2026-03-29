@@ -19,6 +19,7 @@
                     @if (segment.annotation) {
                         <span
                             (mouseenter)="onMouseEnterAnnotation($event, segment.annotation.id)"
+                            (mouseleave)="onMouseLeaveAnnotation()"
                             class="annotation-highlight"
                             [style.text-decoration-color]="segment.annotation.color"
                             [title]="segment.annotation.comment">{{segment.text}}</span>
@@ -38,7 +39,9 @@
 
 
 @if (anchor()) {
-    <pta-popover [anchor]="anchor()">
+    <pta-popover [anchor]="anchor()"
+                 (mouseenter)="mouseInsidePopover.set(true)"
+                 (mouseleave)="onPopoverLeave()">
         <pta-annotation-editor
                 [color]="annotation()?.color"
                 [initialComment]="annotation()?.comment ?? null"
