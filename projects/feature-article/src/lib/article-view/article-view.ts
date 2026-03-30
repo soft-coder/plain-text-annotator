@@ -1,9 +1,7 @@
 import {
   Component,
   inject,
-  computed,
-  HostListener,
-  signal, viewChild, DOCUMENT
+  signal, viewChild, effect, untracked
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -12,13 +10,11 @@ import { AnnotationModel } from '@pta/model';
 import { Button, Popover } from '@pta/ui';
 import { delay, filter, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
+import { AnnotationPopoverAnchor } from './services/annotation-popover-anchor';
+import { ArticleViewSelector, PendingRange } from './services/article-view-selector';
 import { ArticleViewTextProcessor } from './services/article-view-text-processor';
 import { ANNOTATION_COLORS } from '../annotation/color-config';
 import { ArticleViewState } from './services/article-view-state';
-
-type PendingRange = { start: number, end: number, text: string };
-
-type PopoverAnchor = { top: number, left: number };
 
 type MouseEnterAnnotation = { event: MouseEvent, id: string };
 
@@ -26,141 +22,71 @@ type MouseEnterAnnotation = { event: MouseEvent, id: string };
   selector: 'pta-article-view',
   standalone: true,
   imports: [Button, RouterLink, AnnotationEditor, Popover],
-  providers: [ArticleViewState],
+  providers: [
+    ArticleViewState,
+    ArticleViewTextProcessor,
+    ArticleViewSelector,
+    AnnotationPopoverAnchor
+  ],
   templateUrl: './article-view.html',
   styleUrl: './article-view.scss',
   preserveWhitespaces: false
 })
 export class ArticleView {
-  private readonly document = inject(DOCUMENT);
-
   private readonly annotationColor = inject(ANNOTATION_COLORS);
 
   private readonly articleViewTextProcessor = inject(ArticleViewTextProcessor);
 
-  private readonly state = inject(ArticleViewState);
+  private readonly articleViewSelector = inject(ArticleViewSelector);
+
+  private readonly annotationPopoverAnchor = inject(AnnotationPopoverAnchor);
+
+  protected readonly state = inject(ArticleViewState);
 
   private facade = inject(ArticleFacade);
+
   private router = inject(Router);
+
+  protected article = this.state.article;
+
+  protected annotation = this.state.annotation;
 
   protected segments = this.articleViewTextProcessor.segments;
 
-  private pendingRange = signal<PendingRange | null>(null);
+  protected anchor = this.annotationPopoverAnchor.anchor;
 
-  protected anchor = signal<PopoverAnchor | null>(null);
+  private pendingRange = this.articleViewSelector.pendingRange;
 
   protected mouseInsidePopover = signal(false);
 
   private annotationEditor = viewChild(AnnotationEditor);
 
-  private isSelecting = signal(false);
-
-  private initialSegment = signal<HTMLSpanElement | null>(null);
-
   private mouseEnterAnnotation$$ = new Subject<MouseEnterAnnotation | null>();
 
   constructor() {
     this.wathMouseEnterAnnotation();
-  }
-
-  @HostListener('window:mouseup')
-  clearNoSelect() {
-    const elements = document.querySelectorAll('.article-body .no-select');
-    elements.forEach(el => {
-      el.classList.remove('no-select')
-    });
-    if (this.isSelecting()) {
-      this.isSelecting.set(false);
-      this.onEndSelection();
-    }
-  }
-
-  @HostListener('document:scroll')
-  hideAnnotationPopover() {
-    if (this.anchor()) {
-      this.anchor.set(null);
-    }
-  }
-
-  onMouseDownArticleContent(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    const container = target.closest('.article-body');
-    if (!container) return;
-
-    const allElements = Array.from(
-      container.querySelectorAll('.annotation-highlight, .text-segment')
-    );
-    const clickedIndex = allElements.indexOf(target);
-
-    allElements.forEach((el, idx) => {
-      if (idx !== clickedIndex) {
-        el.classList.add('no-select');
+    effect(() => {
+      const pendingRange = this.pendingRange();
+      if (pendingRange) {
+        const id = this.addAnnotation(pendingRange);
+        untracked(() => {
+          this.annotationEditor()?.resetComment();
+          this.state.annotationId.set(id);
+          window.getSelection()?.removeAllRanges();
+          this.articleViewSelector.clearPendingRange()
+        })
       }
     });
-    this.isSelecting.set(true);
+  }
+
+  onMouseDownArticleContent($event: MouseEvent) {
+    this.articleViewSelector.onMouseDownArticleContent($event);
   }
 
   onMouseDownTextSegment($event: MouseEvent) {
-    const currentTarget = $event.currentTarget as HTMLSpanElement;
-    this.initialSegment.set(currentTarget);
+    this.articleViewSelector.onMouseDownTextSegment($event);
   }
 
-
-
-  onEndSelection() {
-    const selection = window.getSelection();
-    const initialSegment = this.initialSegment();
-    if (selection && !selection.isCollapsed && initialSegment) {
-      const range = selection.getRangeAt(0);
-
-      const preSelectionRange = range.cloneRange();
-      const container = document.querySelector('.article-body');
-      preSelectionRange.selectNodeContents(container!);
-      preSelectionRange.setEnd(range.startContainer, range.startOffset)
-
-      const limitStart = parseInt(initialSegment.getAttribute('data-start') || '0');
-      const limitEnd = parseInt(initialSegment.getAttribute('data-end') || '0');
-
-      let start = preSelectionRange.toString().length;
-      const text = selection.toString();
-      let end = start + text.length;
-
-      if (start < limitStart) start = limitStart;
-      if (end > limitEnd) end = limitEnd;
-
-      this.pendingRange.set({ start, end, text });
-
-      const clientRects = range.getClientRects();
-      const endNode = range.endContainer;
-      let endElement: HTMLElement;
-      if (endNode.nodeType === Node.TEXT_NODE) {
-        endElement = endNode.parentElement!;
-      } else {
-        endElement = endNode as HTMLElement;
-      }
-      const anchor = this.calcAnchor(
-        clientRects[clientRects.length - 1],
-        endElement
-      );
-      this.anchor.set(anchor);
-      this.addAnnotation();
-    }
-  }
-
-  private calcAnchor(rect: DOMRect, element: Element): PopoverAnchor {
-    const computedStyle = getComputedStyle(element);
-    const fontSize = parseFloat(computedStyle.fontSize);
-    const lineHeight = parseFloat(computedStyle.lineHeight);
-    const rootStyles = getComputedStyle(this.document.documentElement);
-    const arrowSizeRem = parseFloat(rootStyles.getPropertyValue('--pta-size-arrow'));
-    const rootFontSize = parseFloat(rootStyles.fontSize);
-    const arrowSizePx = rootFontSize * arrowSizeRem;
-    const gapTop = (lineHeight - fontSize) / 2;
-    return {
-      top: rect.top + gapTop + arrowSizePx,
-      left: rect.left
-    };
-  }
 
   onMouseEnterAnnotation($event: MouseEvent, id: string) {
     this.mouseEnterAnnotation$$.next({event: $event, id: id})
@@ -184,22 +110,15 @@ export class ArticleView {
     this.goBack();
   }
 
-  addAnnotation() {
-    const range = this.pendingRange();
-    if (range) {
-      const { start, end } = range;
-      const color = this.calcAnnotationDefaultColor(start, end);
-      const id = this.facade.addAnnotation(
-        this.state.id()!,
-        start,
-        end,
-        color
-      );
-      this.annotationEditor()?.resetComment();
-      this.state.annotationId.set(id);
-      this.anchor.set(null);
-      window.getSelection()?.removeAllRanges();
-    }
+  addAnnotation(range: PendingRange): string {
+    const { start, end } = range;
+    const color = this.calcAnnotationDefaultColor(start, end);
+    return this.facade.addAnnotation(
+      this.state.id()!,
+      start,
+      end,
+      color
+    );
   }
 
   calcAnnotationDefaultColor(start: number, end: number) {
@@ -294,16 +213,11 @@ export class ArticleView {
           this.annotationEditor()?.resetComment();
           this.state.annotationId.set(data.id);
           const target = data.event.target as HTMLSpanElement;
-          const clientRects = target.getClientRects();
-          const anchor = this.calcAnchor(
-            clientRects[clientRects.length - 1],
-            target
-          );
-          this.anchor.set(anchor);
+          this.annotationPopoverAnchor.calcElementAnchor(target);
         } else {
           this.annotationEditor()?.resetComment();
           this.state.annotationId.set(null);
-          this.anchor.set(null);
+          this.annotationPopoverAnchor.clearAnchor();
         }
       }),
       takeUntilDestroyed()
