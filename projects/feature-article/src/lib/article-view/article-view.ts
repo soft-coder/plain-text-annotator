@@ -9,6 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleFacade } from '@pta/data-access';
+import { AnnotationModel } from '@pta/model';
 import { Button, Popover } from '@pta/ui';
 import { delay, filter, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
@@ -210,17 +211,68 @@ export class ArticleView {
     const range = this.pendingRange();
     if (range) {
       const { start, end } = range;
+      const color = this.calcAnnotationDefaultColor(start, end);
       const id = this.facade.addAnnotation(
         this.id(),
         start,
         end,
-        this.annotationColor.defaultColor
+        color
       );
       this.annotationEditor()?.resetComment();
       this.annotationId.set(id);
       this.anchor.set(null);
       window.getSelection()?.removeAllRanges();
     }
+  }
+
+  calcAnnotationDefaultColor(start: number, end: number) {
+    const annotations = this.article()!.annotations;
+    return this.getRandomAnnotationColor(
+      this.findLeftNeighborColor(annotations, start),
+      this.findRightNeighborColor(annotations, end)
+    );
+  }
+
+  private findLeftNeighborColor(
+    annotations: AnnotationModel[],
+    start: number
+  ): string | null {
+    let leftNeighborColor: string | null = null;
+    let lastEnd = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < annotations.length; i++) {
+      const a = annotations[i];
+      if (a.end < start && a.end > lastEnd) {
+        lastEnd = a.end;
+        leftNeighborColor = a.color;
+      }
+    }
+    return leftNeighborColor;
+  }
+
+  private findRightNeighborColor(
+    annotations: AnnotationModel[],
+    end: number
+  ): string | null{
+    let rightNeighborColor: string | null = null;
+    let lastStart = Number.POSITIVE_INFINITY;
+    for (let i = annotations.length - 1; i > 0; i--) {
+      const a = annotations[i];
+      if (end < a.start && a.start < lastStart) {
+        lastStart = a.start;
+        rightNeighborColor = a.color;
+      }
+    }
+    return rightNeighborColor;
+  }
+
+  private getRandomAnnotationColor(
+    leftNeighborColor: string | null,
+    rightNeighborColor: string | null
+  ): string {
+    const filteredColors =  this.annotationColor.presets.filter(c => {
+      return c !== leftNeighborColor && c !== rightNeighborColor;
+    })
+    return filteredColors[Math.floor(Math.random() * filteredColors.length)]
   }
 
   updateAnnotationColor(color: string) {
