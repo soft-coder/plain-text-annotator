@@ -2,7 +2,6 @@ import {
   Component,
   inject,
   computed,
-  input,
   HostListener,
   signal, viewChild, DOCUMENT
 } from '@angular/core';
@@ -15,6 +14,7 @@ import { delay, filter, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
 import { AnnotationTextProcessor } from '../annotation/annotation-text-processor';
 import { ANNOTATION_COLORS } from '../annotation/color-config';
+import { ArticleViewState } from './services/article-view-state';
 
 type PendingRange = { start: number, end: number, text: string };
 
@@ -26,6 +26,7 @@ type MouseEnterAnnotation = { event: MouseEvent, id: string };
   selector: 'pta-article-view',
   standalone: true,
   imports: [Button, RouterLink, AnnotationEditor, Popover],
+  providers: [ArticleViewState],
   templateUrl: './article-view.html',
   styleUrl: './article-view.scss',
   preserveWhitespaces: false
@@ -37,36 +38,19 @@ export class ArticleView {
 
   private readonly annotationTextProcessor = inject(AnnotationTextProcessor);
 
-  // Input от роутера (withComponentInputBinding)
-  id = input.required<string>();
+  private readonly state = inject(ArticleViewState);
 
   private facade = inject(ArticleFacade);
   private router = inject(Router);
 
-  protected article = computed(() =>
-    this.facade.articles().find(a => a.id === this.id())
-  );
-
   protected segments = computed(() => {
-    const article = this.article();
+    const article = this.state.article();
     if (!article || !article.content) return [];
     return this.annotationTextProcessor.splitText(
       article.content,
       article.annotations
     );
   });
-
-  protected annotationId = signal<string | null>(null);
-  
-  protected annotation = computed(() => {
-    const article = this.article();
-    const annotationId = this.annotationId()
-    if (article && annotationId) {
-      return article.annotations.find(a => a.id === annotationId) || null
-    } else {
-      return null;
-    }
-  })
 
   private pendingRange = signal<PendingRange | null>(null);
 
@@ -203,7 +187,7 @@ export class ArticleView {
   }
 
   delete() {
-    this.facade.delete(this.id());
+    this.facade.delete(this.state.id()!);
     this.goBack();
   }
 
@@ -213,20 +197,20 @@ export class ArticleView {
       const { start, end } = range;
       const color = this.calcAnnotationDefaultColor(start, end);
       const id = this.facade.addAnnotation(
-        this.id(),
+        this.state.id()!,
         start,
         end,
         color
       );
       this.annotationEditor()?.resetComment();
-      this.annotationId.set(id);
+      this.state.annotationId.set(id);
       this.anchor.set(null);
       window.getSelection()?.removeAllRanges();
     }
   }
 
   calcAnnotationDefaultColor(start: number, end: number) {
-    const annotations = this.article()!.annotations;
+    const annotations = this.state.annotations() || [];
     return this.getRandomAnnotationColor(
       this.findLeftNeighborColor(annotations, start),
       this.findRightNeighborColor(annotations, end)
@@ -276,10 +260,10 @@ export class ArticleView {
   }
 
   updateAnnotationColor(color: string) {
-    const annotationId = this.annotationId();
+    const annotationId = this.state.annotationId();
     if (annotationId) {
       this.facade.updateAnnotationColor(
-        this.id(),
+        this.state.id()!,
         annotationId,
         color
       );
@@ -287,10 +271,10 @@ export class ArticleView {
   }
 
   updateAnnotationComment(comment: string) {
-    const annotationId = this.annotationId();
+    const annotationId = this.state.annotationId();
     if (annotationId) {
       this.facade.updateAnnotationComment(
-        this.id(),
+        this.state.id()!,
         annotationId,
         comment
       );
@@ -315,7 +299,7 @@ export class ArticleView {
       tap((data: MouseEnterAnnotation | null) => {
         if (data) {
           this.annotationEditor()?.resetComment();
-          this.annotationId.set(data.id);
+          this.state.annotationId.set(data.id);
           const target = data.event.target as HTMLSpanElement;
           const clientRects = target.getClientRects();
           const anchor = this.calcAnchor(
@@ -325,7 +309,7 @@ export class ArticleView {
           this.anchor.set(anchor);
         } else {
           this.annotationEditor()?.resetComment();
-          this.annotationId.set(null);
+          this.state.annotationId.set(null);
           this.anchor.set(null);
         }
       }),
