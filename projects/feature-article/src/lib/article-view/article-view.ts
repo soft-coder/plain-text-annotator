@@ -255,7 +255,7 @@ export class ArticleView {
   ): string | null{
     let rightNeighborColor: string | null = null;
     let lastStart = Number.POSITIVE_INFINITY;
-    for (let i = annotations.length - 1; i > 0; i--) {
+    for (let i = annotations.length - 1; i >= 0; i--) {
       const a = annotations[i];
       if (end < a.start && a.start < lastStart) {
         lastStart = a.start;
