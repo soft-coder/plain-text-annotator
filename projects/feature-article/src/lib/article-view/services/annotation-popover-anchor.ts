@@ -27,16 +27,8 @@ export class AnnotationPopoverAnchor {
 
   calcSelectionAnchor(range: Range) {
     const clientRects = range.getClientRects();
-    const endNode = range.endContainer;
-    let endElement: HTMLElement;
-    if (endNode.nodeType === Node.TEXT_NODE) {
-      endElement = endNode.parentElement!;
-    } else {
-      endElement = endNode as HTMLElement;
-    }
     const anchor = this.calcAnchorPosition(
       clientRects[clientRects.length - 1],
-      endElement
     );
     this._anchor.set(anchor);
   }
@@ -45,7 +37,6 @@ export class AnnotationPopoverAnchor {
     const clientRects = element.getClientRects();
     const anchor = this.calcAnchorPosition(
       clientRects[clientRects.length - 1],
-      element
     );
     this._anchor.set(anchor);
   }
@@ -54,18 +45,16 @@ export class AnnotationPopoverAnchor {
     this._anchor.set(null);
   }
 
-  private calcAnchorPosition(rect: DOMRect, element: Element): PopoverAnchor {
-    const computedStyle = getComputedStyle(element);
-    const fontSize = parseFloat(computedStyle.fontSize);
-    const lineHeight = parseFloat(computedStyle.lineHeight);
+  private calcAnchorPosition(rect: DOMRect): PopoverAnchor {
     const rootStyles = getComputedStyle(this.document.documentElement);
     const arrowSizeRem = parseFloat(rootStyles.getPropertyValue('--pta-size-arrow'));
+    const spacedMdRem = parseFloat(rootStyles.getPropertyValue('--pta-space-md'));
     const rootFontSize = parseFloat(rootStyles.fontSize);
     const arrowSizePx = rootFontSize * arrowSizeRem;
-    const gapTop = (lineHeight - fontSize) / 2;
+    const spacedMdPx = rootFontSize * spacedMdRem;
     return {
-      top: rect.top + gapTop + arrowSizePx,
-      left: rect.left
+      top: rect.bottom + arrowSizePx + 3,
+      left: rect.right - spacedMdPx
     };
   }
 }
