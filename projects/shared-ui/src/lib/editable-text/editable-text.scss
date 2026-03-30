@@ -17,9 +17,11 @@
   &::after {
     content: attr(data-value);
     visibility: hidden;
+    min-width: 0;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
     grid-area: 1 / 1;
-    padding: var(--pta-space-xs) var(--pta-space-sm);
   }
 
 
@@ -37,11 +39,14 @@ textarea {
   overflow: hidden;
   font-family: inherit;
   font-size: inherit;
-  padding: var(--pta-space-xs) var(--pta-space-sm);
   border: none;
   background: transparent;
   outline: none;
   color: inherit;
+  min-width: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
 
   &::placeholder {
     color: #adb5bd;

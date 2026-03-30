@@ -2,7 +2,11 @@
 
 table[pta-table] {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--pta-color-border);
+  border-radius: var(--pta-radius);
   font-size: var(--pta-font-size-base);
   background: var(--pta-color-surface);
 
@@ -10,7 +14,7 @@ table[pta-table] {
     text-align: left;
     padding: var(--pta-space-sm) var(--pta-space-md);
     background-color: color-mix(in srgb, var(--pta-color-bg), black 2%);
-    border-bottom: 2px solid var(--pta-color-border);
+    border-bottom: 1px solid var(--pta-color-border);
     color: #666;
     font-weight: 600;
     text-transform: uppercase;
@@ -21,6 +25,10 @@ table[pta-table] {
     padding: var(--pta-space-sm) var(--pta-space-md);
     border-bottom: 1px solid var(--pta-color-border);
     vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
   }
 
   tr:hover td {

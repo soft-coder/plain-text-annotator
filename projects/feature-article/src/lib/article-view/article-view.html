@@ -14,9 +14,26 @@
 
         <main class="article-content">
             <h1 class="article-title">{{ item.title }}</h1>
-            <div class="article-body">
-                {{ item.content }}
-            </div>
+            <main class="article-body" (mousedown)="onMouseDownArticleContent($event)">
+                @for (segment of segments(); track $index) {
+                    @if (segment.annotation) {
+                        <span
+                            (mouseenter)="onEnterAnnotation($event, segment.annotation.id)"
+                            (mouseleave)="onLeaveAnnotation()"
+                            class="annotation-highlight"
+                            [attr.data-start]="segment.start"
+                            [attr.data-end]="segment.end"
+                            [style.text-decoration-color]="segment.annotation.color"
+                            [title]="segment.annotation.comment">{{segment.text}}</span>
+                    } @else {
+                        <span class="text-segment"
+                              [attr.data-start]="segment.start"
+                              [attr.data-end]="segment.end"
+                              (mousedown)="onMouseDownTextSegment($event)"
+                            >{{segment.text}}</span>
+                    }
+                }
+            </main>
         </main>
     </div>
 } @else {
@@ -24,4 +41,18 @@
         <p>Статья не найдена</p>
         <button pta-button (click)="goBack()">Вернуться к списку</button>
     </div>
+}
+
+
+@if (anchor()) {
+    <pta-popover [anchor]="anchor()"
+                 (mouseenter)="onPopoverEnter()"
+                 (mouseleave)="onPopoverLeave()">
+        <pta-annotation-editor
+                [color]="annotation()?.color"
+                [initialComment]="annotation()?.comment ?? null"
+                (updateColor)="updateAnnotationColor($event)"
+                (updateComment)="updateAnnotationComment($event)"
+        />
+    </pta-popover>
 }

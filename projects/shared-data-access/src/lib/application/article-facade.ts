@@ -55,7 +55,8 @@ export class ArticleFacade {
     this.state.update(articles => articles.filter(article => article.id !== id));
   }
 
-  addAnnotation(articleId: string, start: number, end: number, color: string): void {
+  addAnnotation(articleId: string, start: number, end: number, color: string): string {
+    let newId = this.idGenerator.generate();
     this.state.update(articles => articles.map(article => {
       if (article.id !== articleId){
         return article;
@@ -64,8 +65,9 @@ export class ArticleFacade {
       const text = article.content.substring(start, end);
       const { prefix, suffix } = getContext(article.content, start, end);
 
+
       const annotation: AnnotationModel = {
-        id: this.idGenerator.generate(),
+        id: newId,
         start,
         end,
         text,
@@ -80,6 +82,7 @@ export class ArticleFacade {
         [...article.annotations, annotation]
       };
     }));
+    return newId;
   }
 
   deleteAnnotation(articleId: string, annotationId: string): void {

@@ -1,0 +1,14 @@
+<div class="annotation-editor">
+    <pta-color-picker
+            [value]="color()"
+            [presets]="colorPresets()"
+            (select)="updateColor.emit($event)" />
+
+    <div class="divider"></div>
+
+    <pta-editable-text
+            [initialValue]="initialComment()"
+            (valueChange)="onChangeComment($event)"
+            [placeholder]="'Добавить комментарий...'"
+            [showStyleOnFocus]="false" />
+</div>

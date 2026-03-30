@@ -1,7 +1,7 @@
 @use 'utils' as *;
 
 .container {
-  max-width: var(--pta-size-content-max, pta-rem(1000));
+  max-width: var(--pta-size-content-max, pta-rem(800));
   margin: var(--pta-space-lg) auto;
   padding: 0 var(--pta-space-md);
 }

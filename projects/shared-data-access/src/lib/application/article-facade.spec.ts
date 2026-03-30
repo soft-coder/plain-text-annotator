@@ -197,22 +197,23 @@ describe('ArticleFacade', () => {
       {} as unknown as ArticleModel
     ];
     const generateStub = idGeneratorSpy.generate as Mock;
-    const annotationId = 'annotationId';
-    generateStub.mockReturnValue(annotationId)
+    const mockId = 'annotationId';
+    generateStub.mockReturnValue(mockId)
 
-    service.addAnnotation(targetId, start, end, color);
+    const createdId = service.addAnnotation(targetId, start, end, color);
     const updateSpy = articleStateSpy.update as Mock;
     const updateFn = vi.mocked(updateSpy).mock.calls[0][0];
     const result = updateFn(articles) as ArticleModel[];
 
     expect(result.length).toBe(2);
     expect(result[0].annotations.length).toBe(2);
-    expect(result[0].annotations[1].id).toBe(annotationId);
+    expect(result[0].annotations[1].id).toBe(mockId);
     expect(result[0].annotations[1].text).toBe(text);
     expect(result[0].annotations[1].start).toBe(start);
     expect(result[0].annotations[1].end).toBe(end);
     expect(result[0].annotations[1].color).toBe(color);
     expect(idGeneratorSpy.generate).toHaveBeenCalledTimes(1);
+    expect(createdId).toBe(mockId);
   });
 
 

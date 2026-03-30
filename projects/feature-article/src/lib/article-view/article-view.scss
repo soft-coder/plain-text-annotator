@@ -27,6 +27,7 @@
   margin-top: 0;
   margin-bottom: var(--pta-space-md);
   font-size: pta-rem(32);
+  user-select: none;
 }
 
 .article-body {
@@ -34,4 +35,24 @@
   line-height: 1.6;
   white-space: pre-wrap;
   color: var(--pta-color-text);
+}
+
+.no-select {
+  user-select: none;
+  pointer-events: none;
+}
+
+.annotation-highlight {
+  text-decoration: underline;
+  text-decoration-color: var(--anno-color);
+  text-decoration-thickness: pta-rem(3); // Делаем линию жирнее (3px)
+  text-underline-offset: pta-rem(4);    // Сдвигаем чуть ниже текста для чистоты
+
+  transition: text-decoration-thickness 0.2s;
+  cursor: default;
+
+  &:hover {
+    text-decoration-thickness: pta-rem(5); // Эффект при наведении
+    filter: brightness(0.8);
+  }
 }

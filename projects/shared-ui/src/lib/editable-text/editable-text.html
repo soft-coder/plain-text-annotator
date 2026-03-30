@@ -1,8 +1,9 @@
 <div class="editable-wrapper"
      [class.bordered]="showStyleOnFocus()"
-     [attr.data-value]="value() || placeholder() + ' '">
+     [attr.data-value]="currentValue() || placeholder() + ' '">
       <textarea
-              [(ngModel)]="value"
+              [ngModel]="currentValue()"
+              (ngModelChange)="onChange($event)"
               [placeholder]="placeholder()"
               rows="1">
       </textarea>
