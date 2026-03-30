@@ -77,6 +77,8 @@ export class ArticleView {
 
   private isSelecting = signal(false);
 
+  private initialSegment = signal<HTMLSpanElement | null>(null);
+
   private mouseEnterAnnotation$$ = new Subject<MouseEnterAnnotation | null>();
 
   constructor() {
@@ -120,25 +122,35 @@ export class ArticleView {
     this.isSelecting.set(true);
   }
 
+  onMouseDownTextSegment($event: MouseEvent) {
+    const currentTarget = $event.currentTarget as HTMLSpanElement;
+    this.initialSegment.set(currentTarget);
+  }
+
+
 
   onEndSelection() {
     const selection = window.getSelection();
-    if (selection && !selection.isCollapsed) {
+    const initialSegment = this.initialSegment();
+    if (selection && !selection.isCollapsed && initialSegment) {
       const range = selection.getRangeAt(0);
 
       const preSelectionRange = range.cloneRange();
       const container = document.querySelector('.article-body');
       preSelectionRange.selectNodeContents(container!);
-      preSelectionRange.setEnd(range.startContainer, range.startOffset);
+      preSelectionRange.setEnd(range.startContainer, range.startOffset)
 
-      const start = preSelectionRange.toString().length;
+      const limitStart = parseInt(initialSegment.getAttribute('data-start') || '0');
+      const limitEnd = parseInt(initialSegment.getAttribute('data-end') || '0');
+
+      let start = preSelectionRange.toString().length;
       const text = selection.toString();
+      let end = start + text.length;
 
-      this.pendingRange.set({
-        start,
-        end: start + text.length,
-        text
-      });
+      if (start < limitStart) start = limitStart;
+      if (end > limitEnd) end = limitEnd;
+
+      this.pendingRange.set({ start, end, text });
 
       const clientRects = range.getClientRects();
       const endNode = range.endContainer;
