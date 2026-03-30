@@ -37,3 +37,14 @@ Plain Text Annotator - a tool for adding annotations to plain text files.
 * Использование Angular-специфичных подходов (сервисы, DI, компоненты, реактивность и т.д.)
 * Работа с DOM без сторонних библиотек
 * Реализация подсветки и аннотаций средствами DOM (например, с помощью Range API)
+
+## 📺 Демонстрация работы
+
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/6426ad5b-7dba-49d0-aa46-7e780d259678" width="100%" controls autoplay loop muted>
+    Ваш браузер не поддерживает видео.
+  </video>  
+</div>
+
+
+
