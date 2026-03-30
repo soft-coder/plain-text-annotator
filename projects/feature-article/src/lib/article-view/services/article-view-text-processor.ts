@@ -4,7 +4,7 @@ import { AnnotationModel, TextSegment } from '@pta/model';
 @Injectable({
   providedIn: 'root'
 })
-export class AnnotationTextProcessor {
+export class ArticleViewTextProcessor {
   splitText(content: string, annotations: AnnotationModel[]): TextSegment[] {
     if (!content) return [];
 

@@ -12,7 +12,7 @@ import { AnnotationModel } from '@pta/model';
 import { Button, Popover } from '@pta/ui';
 import { delay, filter, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AnnotationEditor } from '../annotation/annotation-editor/annotation-editor';
-import { AnnotationTextProcessor } from '../annotation/annotation-text-processor';
+import { ArticleViewTextProcessor } from './services/article-view-text-processor';
 import { ANNOTATION_COLORS } from '../annotation/color-config';
 import { ArticleViewState } from './services/article-view-state';
 
@@ -36,7 +36,7 @@ export class ArticleView {
 
   private readonly annotationColor = inject(ANNOTATION_COLORS);
 
-  private readonly annotationTextProcessor = inject(AnnotationTextProcessor);
+  private readonly articleViewTextProcessor = inject(ArticleViewTextProcessor);
 
   private readonly state = inject(ArticleViewState);
 
@@ -46,7 +46,7 @@ export class ArticleView {
   protected segments = computed(() => {
     const article = this.state.article();
     if (!article || !article.content) return [];
-    return this.annotationTextProcessor.splitText(
+    return this.articleViewTextProcessor.splitText(
       article.content,
       article.annotations
     );
