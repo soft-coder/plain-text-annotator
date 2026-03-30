@@ -18,8 +18,8 @@
                 @for (segment of segments(); track $index) {
                     @if (segment.annotation) {
                         <span
-                            (mouseenter)="onMouseEnterAnnotation($event, segment.annotation.id)"
-                            (mouseleave)="onMouseLeaveAnnotation()"
+                            (mouseenter)="onEnterAnnotation($event, segment.annotation.id)"
+                            (mouseleave)="onLeaveAnnotation()"
                             class="annotation-highlight"
                             [attr.data-start]="segment.start"
                             [attr.data-end]="segment.end"
@@ -46,7 +46,7 @@
 
 @if (anchor()) {
     <pta-popover [anchor]="anchor()"
-                 (mouseenter)="mouseInsidePopover.set(true)"
+                 (mouseenter)="onPopoverEnter()"
                  (mouseleave)="onPopoverLeave()">
         <pta-annotation-editor
                 [color]="annotation()?.color"
