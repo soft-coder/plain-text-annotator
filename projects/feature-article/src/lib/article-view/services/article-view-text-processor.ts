@@ -1,11 +1,21 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { AnnotationModel, TextSegment } from '@pta/model';
+import { ArticleViewState } from './article-view-state';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ArticleViewTextProcessor {
-  splitText(content: string, annotations: AnnotationModel[]): TextSegment[] {
+  private readonly state = inject(ArticleViewState);
+
+  segments = computed(() => {
+    const article = this.state.article();
+    if (!article || !article.content) return [];
+    return this.splitText(
+      article.content,
+      article.annotations
+    );
+  });
+
+  private splitText(content: string, annotations: AnnotationModel[]): TextSegment[] {
     if (!content) return [];
 
     const sorted = [...annotations].sort((a, b) => a.start - b.start);

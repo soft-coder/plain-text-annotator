@@ -43,14 +43,7 @@ export class ArticleView {
   private facade = inject(ArticleFacade);
   private router = inject(Router);
 
-  protected segments = computed(() => {
-    const article = this.state.article();
-    if (!article || !article.content) return [];
-    return this.articleViewTextProcessor.splitText(
-      article.content,
-      article.annotations
-    );
-  });
+  protected segments = this.articleViewTextProcessor.segments;
 
   private pendingRange = signal<PendingRange | null>(null);
 
